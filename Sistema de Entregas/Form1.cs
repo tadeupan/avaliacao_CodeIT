@@ -53,7 +53,7 @@ namespace Sistema_de_Entregas
                 {
                     string[] temp = item.Split('|');
 
-                    GridItems.Rows.Add(temp[0], temp[1], temp[2], temp[3].ToUpper());
+                    GridItems.Rows.Add(temp[0], temp[1] , temp[2]);
                 }
 
                 if (GridItems.SelectedRows.Count > 0)
@@ -80,13 +80,14 @@ namespace Sistema_de_Entregas
                 GridEntrega.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
                 GridEntrega.Columns.Add("Nome Produto", "Nome Produto");
                 GridEntrega.Columns.Add("Tempo de Entrega", "Tempo de Entrega");
+                GridEntrega.Columns.Add("Valor do Frete", "Valor do Frete");
 
                 for (int i = 0; i < lista.Length; i++)
                 {
                     if(lista[i] != null)
                     {
                         string[] temp = lista[i].Split('|');
-                        GridEntrega.Rows.Add(temp[0], temp[1] + " hs");
+                        GridEntrega.Rows.Add(temp[0], temp[1], temp[2]);
                     }
                }
             }
@@ -94,6 +95,11 @@ namespace Sistema_de_Entregas
 
         private void btnSalvar_Click(object sender, EventArgs e)
         {
+            if (txtEntrega.Text == "" || txtFrete.Text == "" || txtItem.Text == "")
+            {
+                return;
+            }
+
             Produtos Produtos = new Produtos();
 
             string NomeProduto = txtItem.Text;
@@ -105,7 +111,7 @@ namespace Sistema_de_Entregas
             txtEntrega.Text = "";
             txtFrete.Text = "";
 
-            Produtos.AdicionarProdutos(NomeProduto, ValorFrete, TempoEntrega);
+            Produtos.AdicionarProdutos(NomeProduto, TempoEntrega, ValorFrete);
 
             MontaGrid(1,temp);
         }
@@ -116,10 +122,11 @@ namespace Sistema_de_Entregas
             float[] valores = null;
             float[] prazos = null;
             string[] linhas = null;
-            float valor = 0;
+            float valorFrete = 0;
             float tempo = 0;
-            string item = "";
             float resultado = 0;
+            float valorItem = 0;
+            string item = "";
             float tempoEntrega = float.Parse(txtTotalEntrega.Text);
 
             //verifica se tem items selecionados no grid
@@ -136,12 +143,12 @@ namespace Sistema_de_Entregas
                     if (GridItems.Rows[i].Selected == true)
                     {
                         item = GridItems.Rows[i].Cells[0].Value.ToString();
-                        valor = float.Parse(GridItems.Rows[i].Cells[2].Value.ToString());
+                        valorFrete = float.Parse(GridItems.Rows[i].Cells[2].Value.ToString());
                         tempo = float.Parse(GridItems.Rows[i].Cells[1].Value.ToString());
-                        resultado = valor / tempo;
+                        resultado = valorFrete / tempo;
 
                         //preenche vetores com linhas selecionadas no grid para efetuar a comparação
-                        linhas[j] = item + "|" + resultado + "|" + tempo;
+                        linhas[j] = item + "|" + resultado + "|" + tempo + "|" + valorFrete;
                         j++;
                     }
                 }
@@ -156,12 +163,12 @@ namespace Sistema_de_Entregas
                 for (int i = 0; i < GridItems.Rows.Count; i++)
                 {
                     item = GridItems.Rows[i].Cells[0].Value.ToString();
-                    valor = float.Parse(GridItems.Rows[i].Cells[2].Value.ToString());
+                    valorFrete = float.Parse(GridItems.Rows[i].Cells[2].Value.ToString());
                     tempo = float.Parse(GridItems.Rows[i].Cells[1].Value.ToString());
-                    resultado = valor / tempo;
+                    resultado = valorFrete / tempo;
 
                     //preenche vetor com todas as linhas do grid para efetuar a comparação
-                    linhas[i] = item + "|" + resultado + "|" + tempo;
+                    linhas[i] = item + "|" + resultado + "|" + tempo +"|"+ valorFrete;
                 }           
             }
 
@@ -189,7 +196,7 @@ namespace Sistema_de_Entregas
 
                     if (verificaValor == temp[1])
                     {
-                        linhas[posicao] = temp[0] +"|"+ temp[1] + "|" + temp[2];
+                        linhas[posicao] = temp[0] +"|"+ temp[1] + "|" + temp[2] + "|"+ temp[3];
                         posicao++;
                     }
                    
@@ -198,18 +205,25 @@ namespace Sistema_de_Entregas
 
             //Ordena os itens de acordo com o tempo de entrega de cada um para com o tempo total de entrega (21 horas) e monta o grid de entrega
            items = new string[linhas.Length];
-            float tempoTotal = 0;
-            float valorTotal = 0;
-            for (int i = 0; i < linhas.Length; i++)
-            {
+           float tempoTotal = 0;
+           float valorTotal = 0;
+           
+           for (int i = 0; i < linhas.Length; i++)
+           {
                 string[] temp = linhas[i].Split('|');
                 tempoTotal = tempoTotal + float.Parse(temp[2]);
-                valorTotal = valorTotal + float.Parse(temp[1]);
+                valorTotal = valorTotal + float.Parse(temp[3]);
 
                 if (tempoTotal <= float.Parse(txtTotalEntrega.Text))
                 {
-                    items[i] = temp[0] +"|" + temp[2];
+                    items[i] = temp[0] + "|" + temp[2] + "|" + temp[3];
+                }else
+                {
+                    tempoTotal = tempoTotal - float.Parse(temp[2]);
+                    valorTotal = valorTotal - float.Parse(temp[3]);
+                    break;
                 }
+
             }
 
             LblTempo.Text = tempoTotal + " hs";

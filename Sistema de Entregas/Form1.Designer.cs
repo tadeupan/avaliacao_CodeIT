@@ -108,6 +108,8 @@
             // 
             // GridItems
             // 
+            this.GridItems.AllowUserToAddRows = false;
+            this.GridItems.AllowUserToDeleteRows = false;
             this.GridItems.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.GridItems.Location = new System.Drawing.Point(270, 31);
             this.GridItems.Name = "GridItems";
@@ -116,6 +118,8 @@
             // 
             // GridEntrega
             // 
+            this.GridEntrega.AllowUserToAddRows = false;
+            this.GridEntrega.AllowUserToDeleteRows = false;
             this.GridEntrega.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.GridEntrega.Location = new System.Drawing.Point(600, 29);
             this.GridEntrega.Name = "GridEntrega";

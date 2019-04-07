@@ -60,12 +60,12 @@ namespace Sistema_de_Entregas
 
         }
 
-        public void AdicionarProdutos(string NomeProduto, string ValorFrete, string TempoEntrega)
+        public void AdicionarProdutos(string NomeProduto, string TempoEntrega, string ValorFrete)
         {
             //Insere novas linhas na base de dados
             string[] temp = new string[System.IO.File.ReadAllLines(caminho).Length + 1];
             string[] linhas = System.IO.File.ReadAllLines(caminho);
-            string NovaLinha = NomeProduto +"|"+ ValorFrete + "|" + TempoEntrega;
+            string NovaLinha = NomeProduto + "|" + TempoEntrega + "|" + ValorFrete;
 
             for (int i = 0; i < linhas.Length; i++)
             {
